@@ -40,6 +40,7 @@ export class TypeaheadContainerComponent {
   dropup: boolean;
   guiHeight: string;
   needScrollbar: boolean;
+  focusFirst: boolean;
 
   get isBs4(): boolean {
     return !isBs3();
@@ -75,7 +76,7 @@ export class TypeaheadContainerComponent {
       });
     }
 
-    if (this._matches.length > 0) {
+    if (this._matches.length > 0 && this.focusFirst) {
       this._active = this._matches[0];
       if (this._active.isHeader()) {
         this.nextActiveMatch();
