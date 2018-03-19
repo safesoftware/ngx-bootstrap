@@ -83,6 +83,9 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
    * Template variables: matches, itemTemplate, query
    */
   @Input() optionsListTemplate: TemplateRef<any>;
+  /** used to set whether or not the first typeahead option is automatically made active */
+  @Input() typeaheadFocusFirst = true;
+  /** use to set keys to be ignored by typeahead */
   /** specifies if typeahead is scrollable  */
   @Input() typeaheadScrollable = false;
   /** specifies number of options to show in scroll view  */
@@ -112,8 +115,6 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
   // not yet implemented
   /** if false restrict model values to the ones selected from the popup only will be provided */
   // @Input() protected typeaheadEditable:boolean;
-  /** if false the first match automatically will not be focused as you type */
-  // @Input() protected typeaheadFocusFirst:boolean;
   /** format the ng-model result after selection */
   // @Input() protected typeaheadInputFormatter:any;
   /** if true automatically select an item when there is one option that exactly matches the user input */
@@ -220,7 +221,7 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
       }
 
       // enter, tab
-      if (e.keyCode === 13) {
+      if (e.keyCode === 13 && this._container.active) {
         this._container.selectActiveMatch();
 
         return;
@@ -253,7 +254,11 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
 
     // if an item is visible - prevent form submission
     if (e.keyCode === 13) {
-      e.preventDefault();
+      if (this._container.active) {
+        e.preventDefault();
+      } else {
+        this.hide();
+      }
 
       return;
     }
@@ -289,6 +294,7 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
         typeaheadRef: this,
         placement: this.placement,
         animation: false,
+        focusFirst: this.typeaheadFocusFirst,
         dropup: this.dropup
       });
 

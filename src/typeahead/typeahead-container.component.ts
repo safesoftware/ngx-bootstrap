@@ -40,6 +40,7 @@ export class TypeaheadContainerComponent {
   dropup: boolean;
   guiHeight: string;
   needScrollbar: boolean;
+  focusFirst: boolean;
 
   get isBs4(): boolean {
     return !isBs3();
@@ -67,6 +68,7 @@ export class TypeaheadContainerComponent {
   }
 
   set matches(value: TypeaheadMatch[]) {
+    this._active = null;
     this._matches = value;
     this.needScrollbar = this.typeaheadScrollable && this.typeaheadOptionsInScrollableView < this.matches.length;
     if (this.typeaheadScrollable) {
@@ -75,7 +77,7 @@ export class TypeaheadContainerComponent {
       });
     }
 
-    if (this._matches.length > 0) {
+    if (this._matches.length > 0 && this.focusFirst) {
       this._active = this._matches[0];
       if (this._active.isHeader()) {
         this.nextActiveMatch();
@@ -101,7 +103,9 @@ export class TypeaheadContainerComponent {
   }
 
   selectActiveMatch(): void {
-    this.selectMatch(this._active);
+    if (this._active) {
+      this.selectMatch(this._active);
+    }
   }
 
   prevActiveMatch(): void {
